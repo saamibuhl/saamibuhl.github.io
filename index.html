@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saami — Appuis en architecture, EPFL</title>
+<meta name="description" content="Appuis pour étudiants en architecture à l'EPFL : théorie et critique du projet, tomographie, CAO Archicad, Rhinoceros 3D, organisation du semestre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAFAF8;
+  --ink:#13202D;
+  --ink-70:rgba(19,32,45,.66);
+  --ink-40:rgba(19,32,45,.34);
+  --rule:rgba(19,32,45,.16);
+  --rule-soft:rgba(19,32,45,.08);
+  --plot:#1B3FD8;
+  --mark:#F5C542;
+  --grid-fine:rgba(19,32,45,.045);
+  --grid-bold:rgba(19,32,45,.075);
+  --gut:clamp(20px,4vw,56px);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+body{
+  font-family:'Newsreader',Georgia,serif;
+  font-weight:300;
+  font-size:clamp(1.02rem,1.05vw,1.12rem);
+  line-height:1.6;
+  color:var(--ink);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-fine) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-fine) 1px,transparent 1px),
+    linear-gradient(var(--grid-bold) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-bold) 1px,transparent 1px);
+  background-size:24px 24px,24px 24px,120px 120px,120px 120px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.sheet{max-width:1180px;margin:0 auto;padding:0 var(--gut)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---- type roles ---- */
+h2,h3,.ui{font-family:'Archivo',system-ui,sans-serif;font-weight:600;letter-spacing:-.015em}
+.tag{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.72rem;font-weight:600;letter-spacing:.02em;
+  color:var(--ink-40);
+}
+
+/* =========== HERO =========== */
+.hero{padding:clamp(40px,7vw,80px) 0 clamp(30px,4vw,44px)}
+
+.wordmark{display:block;width:100%;overflow:visible}
+.wordmark text{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-weight:700;
+  fill:var(--ink);
+}
+.reveal{clip-path:inset(0 100% 0 0);animation:wipe 1.05s cubic-bezier(.16,.84,.34,1) .15s forwards}
+@keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+
+.hero-band{
+  display:flex;justify-content:space-between;align-items:baseline;gap:24px;
+  padding:14px 0 0;margin-top:6px;
+  border-top:1.5px solid var(--ink);
+}
+.hero-band .tag{white-space:nowrap}
+
+.promise{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-weight:600;
+  font-size:clamp(1rem,3.05vw,2.5rem);
+  line-height:1.1;
+  letter-spacing:-.032em;
+  margin-top:clamp(28px,5vw,52px);
+  white-space:nowrap;
+}
+@media(max-width:540px){
+  .promise{white-space:normal;font-size:1.62rem;max-width:16ch}
+}
+
+.hero-grid{
+  display:grid;grid-template-columns:1fr;gap:clamp(24px,3vw,40px);
+  margin-top:clamp(24px,3.5vw,40px);
+}
+@media(min-width:860px){
+  .hero-grid{grid-template-columns:1.1fr 1fr;align-items:end}
+}
+.lede{font-size:clamp(1.06rem,1.4vw,1.24rem);line-height:1.62;max-width:52ch;color:var(--ink-70)}
+.lede em{font-style:italic;color:var(--ink)}
+
+.cta-row{display:flex;flex-wrap:wrap;gap:10px}
+
+/* ---- buttons ---- */
+.btn{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.94rem;font-weight:600;letter-spacing:-.01em;
+  padding:15px 26px;
+  text-decoration:none;display:inline-block;
+  border:1.5px solid var(--ink);
+  background:transparent;color:var(--ink);
+  cursor:pointer;
+  transition:background-color .18s ease,color .18s ease;
+}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn-fill{background:var(--plot);border-color:var(--plot);color:#fff}
+.btn-fill:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn:focus-visible,a:focus-visible,button:focus-visible{outline:2.5px solid var(--plot);outline-offset:3px}
+
+/* =========== SECTION FRAME =========== */
+.band{padding:clamp(52px,7vw,96px) 0;border-top:1.5px solid var(--ink)}
+.band-head{
+  display:grid;grid-template-columns:1fr;gap:10px;
+  margin-bottom:clamp(28px,4vw,48px);
+}
+@media(min-width:860px){
+  .band-head{grid-template-columns:minmax(0,7ch) 1fr;gap:clamp(24px,3vw,48px);align-items:baseline}
+}
+.band-head h2{
+  font-size:clamp(1.4rem,3.1vw,2.35rem);
+  line-height:1.08;letter-spacing:-.028em;max-width:22ch;
+  white-space:nowrap;
+}
+@media(max-width:430px){
+  .band-head h2{white-space:normal;max-width:16ch}
+}
+.band-head .note{font-size:1rem;color:var(--ink-70);max-width:46ch;margin-top:10px}
+
+/* =========== MATIÈRES =========== */
+.roster{border-top:1px solid var(--rule)}
+.entry{
+  display:grid;grid-template-columns:1fr;gap:6px;
+  padding:clamp(20px,2.6vw,30px) 0;
+  border-bottom:1px solid var(--rule);
+}
+@media(min-width:860px){
+  .entry{grid-template-columns:minmax(0,7ch) minmax(0,21ch) 1fr;gap:clamp(24px,3vw,48px);align-items:baseline}
+}
+.entry h3{font-size:clamp(1.12rem,1.6vw,1.3rem);line-height:1.2;letter-spacing:-.02em}
+.entry h3.solo{white-space:nowrap}
+.entry p{color:var(--ink-70);max-width:54ch;font-size:1.02rem}
+
+/* =========== APPROCHE =========== */
+.statement{
+  font-size:clamp(1.28rem,2.9vw,2.05rem);
+  line-height:1.28;letter-spacing:-.014em;
+  max-width:24ch;font-weight:300;
+}
+.aside{
+  margin-top:clamp(24px,3vw,36px);
+  color:var(--ink-70);max-width:46ch;
+}
+
+/* =========== PLANNING =========== */
+.picker{margin-bottom:clamp(30px,4vw,44px)}
+.picker-label{display:block;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.86rem;font-weight:500;letter-spacing:-.01em;
+  padding:9px 15px;
+  border:1px solid var(--rule);
+  background:transparent;color:var(--ink-70);
+  cursor:pointer;
+  transition:border-color .16s ease,color .16s ease,background-color .16s ease;
+}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+.axis{
+  display:grid;
+  grid-template-columns:var(--daycol) 1fr;
+  align-items:end;
+  margin-bottom:6px;
+  --daycol:clamp(38px,7vw,84px);
+}
+.axis-ticks{position:relative;height:22px}
+.axis-ticks span{
+  position:absolute;bottom:0;transform:translateX(-50%);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.72rem;font-weight:500;color:var(--ink-40);
+}
+.axis-ticks span::after{
+  content:"";position:absolute;left:50%;bottom:-6px;
+  width:1px;height:5px;background:var(--rule);
+}
+
+.plan{border-top:1px solid var(--ink)}
+.row{
+  display:grid;
+  grid-template-columns:var(--daycol) 1fr;
+  align-items:center;
+  gap:0;
+  border-bottom:1px solid var(--rule);
+  --daycol:clamp(38px,7vw,84px);
+}
+.row-day{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.8rem;font-weight:600;letter-spacing:-.005em;
+  color:var(--ink);padding:16px 10px 16px 0;
+}
+.row-off .row-day{color:var(--ink-40)}
+.track{
+  position:relative;height:56px;
+  background-image:repeating-linear-gradient(90deg,var(--rule-soft) 0 1px,transparent 1px 10%);
+}
+.slot{
+  position:absolute;top:9px;bottom:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:clamp(.68rem,1.4vw,.84rem);font-weight:600;letter-spacing:-.01em;
+  background:var(--mark);color:var(--ink);
+  border:1.5px solid var(--ink);
+  cursor:pointer;white-space:nowrap;overflow:hidden;
+  transition:background-color .16s ease,color .16s ease;
+}
+.slot:hover{background:var(--ink);color:var(--mark)}
+.slot[aria-pressed="true"]{background:var(--plot);border-color:var(--plot);color:#fff}
+.bandwrap{
+  position:absolute;top:9px;bottom:9px;
+  display:flex;
+  border:1.5px solid var(--ink);
+  background:var(--mark);
+  overflow:hidden;
+}
+.seg{
+  flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.74rem;font-weight:600;letter-spacing:-.01em;
+  color:var(--ink);
+  background:transparent;
+  border:none;border-right:1px solid rgba(19,32,45,.22);
+  cursor:pointer;padding:0;
+  transition:background-color .14s ease,color .14s ease;
+}
+.seg:last-child{border-right:none}
+.seg:hover{background:rgba(19,32,45,.16)}
+.seg[aria-pressed="true"]{background:var(--plot);color:#fff;border-right-color:rgba(255,255,255,.28)}
+.seg[aria-pressed="true"]:hover{background:var(--plot)}
+@media(max-width:720px){.seg{font-size:0}}
+
+.track-empty{
+  position:absolute;inset:9px 0;
+  display:flex;align-items:center;
+  padding-left:2px;
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.76rem;font-weight:500;color:var(--ink-40);
+}
+.track-open{
+  position:absolute;top:9px;bottom:9px;left:0;right:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:clamp(.68rem,1.4vw,.82rem);font-weight:600;
+  color:var(--ink-70);cursor:pointer;
+  border:1.5px dashed var(--rule);
+  background:repeating-linear-gradient(45deg,transparent 0 7px,var(--rule-soft) 7px 8px);
+  transition:border-color .16s ease,color .16s ease;
+}
+.track-open:hover{border-color:var(--ink);color:var(--ink)}
+.track-open[aria-pressed="true"]{
+  border-style:solid;border-color:var(--plot);color:#fff;
+  background:var(--plot);
+}
+
+/* =========== BRIEF / ENVOI =========== */
+.dispatch{background:var(--ink);color:var(--paper);border-top:none}
+.dispatch h2{color:var(--paper)}
+.dispatch .band-head .note{color:rgba(250,250,248,.6)}
+.dispatch .tag{color:rgba(250,250,248,.45)}
+
+.slip{
+  display:grid;grid-template-columns:1fr;gap:clamp(26px,3.4vw,44px);
+}
+@media(min-width:860px){.slip{grid-template-columns:1.15fr 1fr;align-items:start}}
+
+.draft{
+  border:1px solid rgba(250,250,248,.22);
+  padding:clamp(20px,2.6vw,30px);
+}
+.draft-line{
+  display:flex;gap:14px;align-items:baseline;
+  padding:11px 0;border-bottom:1px solid rgba(250,250,248,.13);
+}
+.draft-line:last-of-type{border-bottom:none}
+.draft-key{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-size:.74rem;font-weight:600;color:rgba(250,250,248,.45);
+  flex:0 0 clamp(66px,9vw,92px);
+}
+.draft-val{font-size:1.05rem;color:var(--paper)}
+.draft-val.pending{color:rgba(250,250,248,.38);font-style:italic}
+
+.dispatch-copy{color:rgba(250,250,248,.72);max-width:42ch}
+.dispatch .cta-row{margin-top:clamp(22px,3vw,30px)}
+.dispatch .btn{border-color:var(--paper);color:var(--paper)}
+.dispatch .btn:hover{background:var(--paper);color:var(--ink)}
+.dispatch .btn-fill{background:var(--mark);border-color:var(--mark);color:var(--ink)}
+.dispatch .btn-fill:hover{background:var(--paper);border-color:var(--paper);color:var(--ink)}
+.direct{margin-top:26px;font-size:.98rem;color:rgba(250,250,248,.5)}
+.direct a{color:var(--paper);text-decoration:none;border-bottom:1px solid rgba(250,250,248,.35);padding-bottom:2px}
+.direct a:hover{border-bottom-color:var(--paper)}
+
+/* =========== CARTOUCHE =========== */
+.cartouche{padding:clamp(30px,4vw,44px) 0 clamp(40px,5vw,60px)}
+.cartouche-box{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  border:1.5px solid var(--ink);
+}
+@media(min-width:700px){.cartouche-box{grid-template-columns:repeat(4,1fr)}}
+.cell{padding:14px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.cell:nth-child(2n){border-right:none}
+@media(min-width:700px){
+  .cell{border-bottom:none}
+  .cell:nth-child(2n){border-right:1px solid var(--rule)}
+  .cell:last-child{border-right:none}
+}
+.cell .tag{display:block;margin-bottom:5px}
+.cell .val{font-family:'Archivo',system-ui,sans-serif;font-size:.92rem;font-weight:500;letter-spacing:-.01em}
+.cell a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+.cell a:hover{border-bottom-color:var(--ink)}
+
+.legend{
+  margin-top:clamp(22px,3vw,32px);
+  display:grid;grid-template-columns:1fr;gap:12px;
+  max-width:60ch;
+}
+.legend p{color:var(--ink-70);font-size:1rem;line-height:1.55}
+.legend strong{font-weight:400;color:var(--ink);font-family:'Archivo',system-ui,sans-serif;font-size:.96rem}
+
+/* =========== TARIFS =========== */
+.rates{
+  display:grid;grid-template-columns:1fr;
+  border:1.5px solid var(--ink);
+  max-width:720px;
+}
+@media(min-width:640px){.rates{grid-template-columns:1fr 1fr}}
+.rate{padding:clamp(20px,2.6vw,28px);border-bottom:1px solid var(--rule)}
+.rate:last-child{border-bottom:none}
+@media(min-width:640px){
+  .rate{border-bottom:none;border-right:1px solid var(--rule)}
+  .rate:last-child{border-right:none}
+}
+.rate .tag{display:block;margin-bottom:10px}
+.rate .price{
+  font-family:'Archivo',system-ui,sans-serif;
+  font-weight:700;font-size:clamp(1.9rem,4vw,2.6rem);
+  letter-spacing:-.035em;line-height:1;
+}
+.rate .price small{font-size:.4em;font-weight:600;letter-spacing:-.01em;margin-left:.35em}
+.rate .split{margin-top:9px;font-size:.98rem;color:var(--ink-70)}
+
+/* =========== APPARITION AU DÉFILEMENT =========== */
+.rise{
+  opacity:0;transform:translateY(16px);
+  transition:opacity .75s cubic-bezier(.16,.84,.34,1),transform .75s cubic-bezier(.16,.84,.34,1);
+}
+.rise.in{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+  .reveal{clip-path:none}
+  .rise{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="sheet">
+    <h1>
+      <span class="sr">Saami</span>
+      <svg class="wordmark reveal" viewBox="0 0 1000 248" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <text x="0" y="228" font-size="300" textLength="1000" lengthAdjust="spacingAndGlyphs">SAAMI</text>
+      </svg>
+    </h1>
+
+    <div class="hero-band">
+      <span class="tag">Appuis en architecture</span>
+      <span class="tag">EPFL</span>
+    </div>
+
+    <p class="promise">Ton projet mérite mieux qu'un « ça passe ».</p>
+
+    <div class="hero-grid">
+      <p class="lede">
+        Je suis passé par les mêmes cours, les mêmes critiques, les mêmes nuits avant rendu.
+        Je sais où ça coince, et surtout <em>ce qui fait basculer un projet correct
+        vers un projet qu'on remarque</em>.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-fill" href="#planning">Choisir un créneau</a>
+        <a class="btn" href="#envoi">M'écrire</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= MATIÈRES ================= -->
+<section class="band">
+  <div class="sheet">
+    <div class="band-head rise">
+      <span class="tag">Domaines</span>
+      <div>
+        <h2>Ce sur quoi je te débloque</h2>
+        <p class="note">Cinq terrains où les étudiants perdent le plus de temps, et où j'ai déjà fait le chemin.</p>
+      </div>
+    </div>
+
+    <div class="roster">
+      <div class="entry rise">
+        <span class="tag">Projet</span>
+        <h3>Théorie et critique du projet — BA1</h3>
+        <p>Réaliser un bon projet et savoir le défendre quand on te pousse dans les cordes. Une critique se gagne avant d'entrer dans la salle.</p>
+      </div>
+      <div class="entry rise">
+        <span class="tag">Représentation</span>
+        <h3>Tomographie architecturale — BA1</h3>
+        <p>Maîtriser tes outils, manuels et digitaux, comprendre le but de la coupe, et faire ressortir le cœur et l'essence d'un bâti.</p>
+      </div>
+      <div class="entry rise">
+        <span class="tag">Logiciel</span>
+        <h3 class="solo">CAO, Archicad — BA3</h3>
+        <p>Structurer ta maquette dès le premier jour pour ne pas tout reprendre la veille du rendu. Mise en page et sorties qui tiennent le rythme du semestre.</p>
+      </div>
+      <div class="entry rise">
+        <span class="tag">Logiciel</span>
+        <h3>Rhinoceros 3D</h3>
+        <p>Arrête de te battre avec l'outil. Modélisation propre, mise en page qui se lit, images qui servent le projet au lieu de le décorer.</p>
+      </div>
+      <div class="entry rise">
+        <span class="tag">Méthode</span>
+        <h3>Organisation générale en architecture</h3>
+        <p>Un semestre se joue sur la méthode. Planifier les rendus, arbitrer ce qui compte, arriver au jury sans être à sec.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APPROCHE ================= -->
+<section class="band">
+  <div class="sheet">
+    <div class="band-head rise">
+      <span class="tag">Méthode</span>
+      <div><h2>Pourquoi travailler avec moi</h2></div>
+    </div>
+    <p class="statement rise">
+      Je ne te donne pas la réponse. Je t'apprends à la construire,
+      pour que la prochaine fois tu n'aies plus besoin de moi.
+    </p>
+    <p class="aside rise">
+      Tout vient de la pratique : les mêmes cours que toi, les mêmes rendus, plus l'expérience
+      acquise en bureau d'architecture. Actuellement en 3<sup>e</sup> année.
+    </p>
+  </div>
+</section>
+
+<!-- ================= TARIFS ================= -->
+<section class="band">
+  <div class="sheet">
+    <div class="band-head rise">
+      <span class="tag">Tarifs</span>
+      <div>
+        <h2>Ce que ça coûte</h2>
+        <p class="note">Facturé à l'heure, sans engagement et sans forfait à acheter d'avance.</p>
+      </div>
+    </div>
+    <div class="rates rise">
+      <div class="rate">
+        <span class="tag">Seul</span>
+        <span class="price">30 CHF<small>/ heure</small></span>
+      </div>
+      <div class="rate">
+        <span class="tag">À deux</span>
+        <span class="price">50 CHF<small>/ heure</small></span>
+        <p class="split">Soit 25 CHF chacun. Viens avec quelqu'un de ton atelier.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLANNING ================= -->
+<section class="band" id="planning">
+  <div class="sheet">
+    <div class="band-head rise">
+      <span class="tag">Disponibilités</span>
+      <div>
+        <h2>Choisis ton créneau</h2>
+        <p class="note">Choisis ta matière, puis ton horaire. Ton message se prépare tout seul en bas de page.</p>
+      </div>
+    </div>
+
+    <div class="picker rise">
+      <span class="tag picker-label">Matière</span>
+      <div class="chips" id="chips">
+        <button class="chip" type="button" aria-pressed="false" data-subject="Théorie et critique du projet — BA1">Projet</button>
+        <button class="chip" type="button" aria-pressed="false" data-subject="Tomographie architecturale — BA1">Tomographie</button>
+        <button class="chip" type="button" aria-pressed="false" data-subject="CAO, Archicad — BA3">CAO / Archicad</button>
+        <button class="chip" type="button" aria-pressed="false" data-subject="Rhinoceros 3D">Rhinoceros 3D</button>
+        <button class="chip" type="button" aria-pressed="false" data-subject="Organisation générale">Organisation</button>
+      </div>
+    </div>
+
+    <div class="axis rise" aria-hidden="true">
+      <span></span>
+      <div class="axis-ticks">
+        <span style="left:0%">8h</span>
+        <span style="left:20%">10h</span>
+        <span style="left:40%">12h</span>
+        <span style="left:60%">14h</span>
+        <span style="left:80%">16h</span>
+        <span style="left:100%">18h</span>
+      </div>
+    </div>
+
+    <div class="plan rise" id="plan"></div>
+
+    <div class="legend rise">
+      <p><strong>Une case cliquée = une heure de cours.</strong> Cliquer 8h réserve la séance de 8h à 9h. Le dernier créneau de la journée est donc 17h, pour un cours de 17h à 18h.</p>
+      <p>Pour une séance plus longue, clique l'heure de début puis l'heure de fin : de 14h à 16h, ça fait deux heures.</p>
+      <p>Rien ne t'arrange, ou tu as une demande particulière ? Écris-moi. Un cours exceptionnel en dehors de ces horaires, ça se discute.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENVOI ================= -->
+<section class="band dispatch" id="envoi">
+  <div class="sheet">
+    <div class="band-head rise">
+      <span class="tag">Contact</span>
+      <div>
+        <h2>Ton message est prêt</h2>
+        <p class="note">Vérifie, complète si tu veux, et envoie. Je réponds dans la journée.</p>
+      </div>
+    </div>
+
+    <div class="slip rise">
+      <div class="draft">
+        <div class="draft-line">
+          <span class="draft-key">Matière</span>
+          <span class="draft-val pending" id="out-subject">à sélectionner</span>
+        </div>
+        <div class="draft-line">
+          <span class="draft-key">Créneau</span>
+          <span class="draft-val pending" id="out-slot">à sélectionner</span>
+        </div>
+        <div class="draft-line">
+          <span class="draft-key">À préciser</span>
+          <span class="draft-val pending">ce sur quoi tu bloques</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="dispatch-copy">
+          Aucun créneau ne colle, ou tu as une demande particulière ? Écris-moi quand même.
+          Un cours en dehors de ces horaires, c'est possible ponctuellement.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-fill" id="link-mail" href="mailto:saami.buhlmann@epfl.ch">Envoyer par email</a>
+          <a class="btn" id="link-wa" href="https://wa.me/41765847940" target="_blank" rel="noopener">Envoyer sur WhatsApp</a>
+        </div>
+        <p class="direct">
+          <a href="mailto:saami.buhlmann@epfl.ch">saami.buhlmann@epfl.ch</a><br>
+          <a href="tel:+41765847940">+41 76 584 79 40</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARTOUCHE ================= -->
+<footer class="cartouche">
+  <div class="sheet">
+    <div class="cartouche-box rise">
+      <div class="cell">
+        <span class="tag">Intervenant</span>
+        <span class="val">Saami Buhlmann</span>
+      </div>
+      <div class="cell">
+        <span class="tag">Objet</span>
+        <span class="val">Appuis en architecture</span>
+      </div>
+      <div class="cell">
+        <span class="tag">Lieu</span>
+        <span class="val">EPFL, Lausanne</span>
+      </div>
+      <div class="cell">
+        <span class="tag">Contact</span>
+        <span class="val"><a href="mailto:saami.buhlmann@epfl.ch">saami.buhlmann@epfl.ch</a></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+
+  /* ---------- Données : modifie ici pour changer tes disponibilités ----------
+     Les heures sont en décimal : 13.25 = 13h15, 15.5 = 15h30            */
+  var AXIS_FROM = 8, AXIS_TO = 18;
+
+  var DAYS = [
+    {name:'Lundi',    bands:[]},
+    {name:'Mardi',    bands:[[15,18]]},
+    {name:'Mercredi', bands:[[8,12],[14,18]]},
+    {name:'Jeudi',    bands:[[8,12],[14,18]]},
+    {name:'Vendredi', bands:[[8,12],[15,18]]},
+    {name:'Samedi',   onRequest:true},
+    {name:'Dimanche', onRequest:true}
+  ];
+
+  var MAIL = 'saami.buhlmann@epfl.ch';
+  var WA   = '41765847940';
+
+  var state = {subject:null, slot:null};
+  var sel = null; /* {day, band, a, b} indices de segments */
+
+  function fmt(h){
+    var hh = Math.floor(h + 1e-9);
+    var mm = Math.round((h - hh) * 60);
+    return mm ? hh + 'h' + (mm < 10 ? '0' + mm : mm) : hh + 'h';
+  }
+  function pct(h){ return (h - AXIS_FROM) / (AXIS_TO - AXIS_FROM) * 100; }
+
+  /* Découpe une plage en segments d'une heure ; le dernier peut être plus court */
+  function cut(from, to){
+    var out = [], cur = from;
+    while(cur < to - 1e-9){
+      var next = Math.min(cur + 1, to);
+      out.push([cur, next]);
+      cur = next;
+    }
+    return out;
+  }
+
+  /* ---------- Construction du diagramme ---------- */
+  var plan = document.getElementById('plan');
+
+  DAYS.forEach(function(day, di){
+    var row = document.createElement('div');
+    row.className = 'row' + ((!day.onRequest && (!day.bands || !day.bands.length)) ? ' row-off' : '');
+
+    var label = document.createElement('span');
+    label.className = 'row-day';
+    label.textContent = day.name;
+    row.appendChild(label);
+
+    var track = document.createElement('div');
+    track.className = 'track';
+
+    if(day.onRequest){
+      var open = document.createElement('button');
+      open.type = 'button';
+      open.className = 'track-open';
+      open.setAttribute('aria-pressed','false');
+      open.textContent = 'À convenir';
+      open.dataset.free = day.name;
+      track.appendChild(open);
+
+    } else if(day.bands && day.bands.length){
+      day.bands.forEach(function(band, bi){
+        var wrap = document.createElement('div');
+        wrap.className = 'bandwrap';
+        wrap.style.left  = pct(band[0]) + '%';
+        wrap.style.width = (pct(band[1]) - pct(band[0])) + '%';
+
+        var segs = cut(band[0], band[1]);
+        var total = band[1] - band[0];
+
+        segs.forEach(function(seg, si){
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'seg';
+          b.style.flexBasis = ((seg[1] - seg[0]) / total * 100) + '%';
+          b.setAttribute('aria-pressed','false');
+          b.setAttribute('aria-label', day.name + ', cours de ' + fmt(seg[0]) + ' à ' + fmt(seg[1]));
+          b.textContent = fmt(seg[0]);
+          b.dataset.d = di; b.dataset.b = bi; b.dataset.s = si;
+          b.dataset.from = seg[0]; b.dataset.to = seg[1];
+          wrap.appendChild(b);
+        });
+
+        track.appendChild(wrap);
+      });
+
+    } else {
+      var off = document.createElement('span');
+      off.className = 'track-empty';
+      off.textContent = 'Indisponible';
+      track.appendChild(off);
+    }
+
+    row.appendChild(track);
+    plan.appendChild(row);
+  });
+
+  /* ---------- Sélection ---------- */
+  var segs = Array.prototype.slice.call(plan.querySelectorAll('.seg'));
+  var frees = Array.prototype.slice.call(plan.querySelectorAll('.track-open'));
+
+  function segsOf(di, bi){
+    return segs.filter(function(x){ return +x.dataset.d === di && +x.dataset.b === bi; });
+  }
+
+  function paint(){
+    segs.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+    frees.forEach(function(x){ x.setAttribute('aria-pressed','false'); });
+
+    if(sel && sel.free){
+      sel.free.setAttribute('aria-pressed','true');
+      state.slot = sel.free.dataset.free + ', horaire à convenir';
+    } else if(sel){
+      var group = segsOf(sel.day, sel.band);
+      var lo = Math.min(sel.a, sel.b), hi = Math.max(sel.a, sel.b);
+      var from = null, to = null;
+      group.forEach(function(x){
+        var i = +x.dataset.s;
+        if(i >= lo && i <= hi){
+          x.setAttribute('aria-pressed','true');
+          if(from === null) from = +x.dataset.from;
+          to = +x.dataset.to;
+        }
+      });
+      state.slot = DAYS[sel.day].name + ', ' + fmt(from) + ' – ' + fmt(to);
+    } else {
+      state.slot = null;
+    }
+    render();
+  }
+
+  segs.forEach(function(b){
+    b.addEventListener('click', function(){
+      var d = +b.dataset.d, bd = +b.dataset.b, si = +b.dataset.s;
+
+      if(sel && !sel.free && sel.day === d && sel.band === bd){
+        /* même plage : on étend, ou on désélectionne si c'est le seul segment choisi */
+        if(sel.a === si && sel.b === si){ sel = null; }
+        else if(sel.a === si || sel.b === si){ sel = {day:d, band:bd, a:si, b:si}; }
+        else { sel = {day:d, band:bd, a:sel.a, b:si}; }
+      } else {
+        sel = {day:d, band:bd, a:si, b:si};
+      }
+      paint();
+    });
+  });
+
+  frees.forEach(function(f){
+    f.addEventListener('click', function(){
+      sel = (sel && sel.free === f) ? null : {free:f};
+      paint();
+    });
+  });
+
+  /* ---------- Matières ---------- */
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var on = chip.getAttribute('aria-pressed') === 'true';
+      chips.forEach(function(c){ c.setAttribute('aria-pressed','false'); });
+      state.subject = on ? null : chip.dataset.subject;
+      if(!on) chip.setAttribute('aria-pressed','true');
+      render();
+    });
+  });
+
+  /* ---------- Message composé ---------- */
+  function render(){
+    var s1 = document.getElementById('out-subject');
+    var s2 = document.getElementById('out-slot');
+
+    s1.textContent = state.subject || 'à sélectionner';
+    s1.classList.toggle('pending', !state.subject);
+    s2.textContent = state.slot || 'à sélectionner';
+    s2.classList.toggle('pending', !state.slot);
+
+    var body = [
+      'Salut Saami,', '',
+      'Matière : ' + (state.subject || ''),
+      'Créneau souhaité : ' + (state.slot || ''),
+      'Ce sur quoi je bloque : ',
+      '', 'Merci !'
+    ].join('\n');
+
+    var subj = state.subject ? 'Appui — ' + state.subject : "Demande d'appui en architecture";
+
+    document.getElementById('link-mail').href =
+      'mailto:' + MAIL + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+    document.getElementById('link-wa').href =
+      'https://wa.me/' + WA + '?text=' + encodeURIComponent(body);
+  }
+
+  render();
+
+  /* ---------- Apparition au défilement ---------- */
+  var slow = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var risers = Array.prototype.slice.call(document.querySelectorAll('.rise'));
+
+  if(slow || !('IntersectionObserver' in window)){
+    risers.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var peers = Array.prototype.slice.call(e.target.parentNode.children)
+                      .filter(function(n){ return n.classList.contains('rise'); });
+        var i = peers.indexOf(e.target);
+        e.target.style.transitionDelay = (i > 0 ? Math.min(i, 6) * 70 : 0) + 'ms';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -6% 0px'});
+
+    risers.forEach(function(el){ io.observe(el); });
+  }
+
+})();
+</script>
+
+</body>
+</html>
